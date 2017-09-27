@@ -1,8 +1,12 @@
 import express from "express";
 import morgan from "morgan";
+import mongoose from 'mongoose';
 import config from "config";
 
 var app = express();
+
+require("./models").connect(config.dbUri);
+
 
 app.use(morgan("dev"));
 
