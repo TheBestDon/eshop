@@ -1,0 +1,62 @@
+{
+  "name": "e-shop",
+  "version": "1.0.0",
+  "description": "E-shop with node.js, MongoDB, Stripe",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon --exec babel-node server.js --ignore public/",
+    "dev": "webpack -wd",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheBestDon/eshop.git"
+  },
+  "author": "Donatas Bakanas",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.16.2",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.17.2",
+    "ejs": "^2.5.7",
+    "es6-promise": "^4.1.1",
+    "express": "^4.15.4",
+    "jsonwebtoken": "^7.4.3",
+    "material-ui": "^0.19.0",
+    "moment": "^2.18.1",
+    "mongodb": "^2.2.31",
+    "mongoose": "^4.11.9",
+    "node-sass-middleware": "^0.11.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-inline-grid": "^0.5.3",
+    "react-router": "^3.0.0",
+    "react-tap-event-plugin": "^2.0.1",
+    "validator": "^8.1.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-plugin-module-resolver": "^2.7.1",
+    "babel-preset-flow": "^6.23.0",
+    "eslint": "^4.5.0",
+    "eslint-config-google": "^0.9.1",
+    "eslint-config-prettier": "^2.4.0",
+    "eslint-plugin-flowtype": "^2.35.1",
+    "eslint-plugin-prettier": "^2.2.0",
+    "eslint-plugin-react": "^7.3.0",
+    "flow-bin": "^0.54.1",
+    "morgan": "^1.9.0",    
+    "nodemon": "^1.11.0",
+    "prettier": "^1.6.1",
+    "webpack": "^3.5.5",
+    "webpack-livereload-plugin": "^0.11.0"
+  }
+}

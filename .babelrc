@@ -1,0 +1,14 @@
+{
+    "plugins": [
+      ["module-resolver", {
+        "root": ["./client/src"],
+        "alias": {
+          "test": "./test",
+          "underscore": "lodash",
+          "config": "./config.js"
+        }
+      }]
+    ],
+
+    "presets": ["react", "env", "stage-2"]
+  }
