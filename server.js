@@ -2,39 +2,68 @@ import express from "express";
 import morgan from "morgan";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
-import config from "config";
+import config from "./config/secret";
 import ejs from "ejs";
 import ejsMate from "ejs-mate";
+import session from "express-session";
+import cookieParser from "cookie-parser";
+import flash from "express-flash";
+import passport from "passport";
+const MongoStore = require("connect-mongo")(session);
 
 var User = require("./models/user");
 
 var app = express();
 
-require("./models").connect(config.dbUri);
+mongoose.connect(
+  config.dbUri,
+  {
+    useMongoClient: true
+  },
+  err => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("Connected to database");
+    }
+  }
+);
 
+app.use(express.static("public"));
 app.use(morgan("dev"));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  bodyParser.urlencoded({
+    extended: true
+  })
+);
+app.use(cookieParser());
+app.use(
+  session({
+    resave: true,
+    saveUninitialized: true,
+    secret: config.secretKey,
+    store: new MongoStore({ url: config.dbUri, autoReconect: true })
+  })
+);
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 
-app.post("/create-user", (req, res) => {
-  var user = new User();
+var mainRoutes = require("./routes/main");
+var userRoutes = require("./routes/user");
+var adminRoutes = require("./routes/admin");
 
-  user.profile.name = req.body.name;
-  user.password = req.body.password;
-  user.email = req.body.email;
+app.use(mainRoutes);
+app.use(userRoutes);
+app.use(adminRoutes);
 
-  user.save((err, user) => {
-    if (err) return next(err);
-
-    res.json("Succesfully created user!");
-  });
-});
-
-app.get("/", (req, res) => {
-  res.render("home");
-});
 
 app.listen(config.port, config.host, () => {
   console.log(
