@@ -12,9 +12,11 @@ import passport from "passport";
 const MongoStore = require("connect-mongo")(session);
 
 var User = require("./models/user");
+var Category = require("./models/category");
 
 var app = express();
 
+mongoose.Promise = require("bluebird");
 mongoose.connect(
   config.dbUri,
   {
@@ -53,17 +55,26 @@ app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
+app.use((req, res, next) => {
+  Category.find({}, (err, categories) => {
+    if (err) return next(err);
+    res.locals.categories = categories;
+    next();
+  });
+});
+
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 
 var mainRoutes = require("./routes/main");
 var userRoutes = require("./routes/user");
 var adminRoutes = require("./routes/admin");
+var apiRoutes = require("./api/api");
 
 app.use(mainRoutes);
 app.use(userRoutes);
 app.use(adminRoutes);
-
+app.use("/api", apiRoutes);
 
 app.listen(config.port, config.host, () => {
   console.log(

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosastic from "mongoosastic";
 var Schema = mongoose.Schema;
 
 var ProductSchema = new Schema({
@@ -8,4 +9,8 @@ var ProductSchema = new Schema({
   image: String
 });
 
-module.exports = mongoose.model("Category", ProductSchema);
+ProductSchema.plugin(mongoosastic, {
+  hosts: ["localhost:9200"]
+});
+
+module.exports = mongoose.model("Product", ProductSchema);
