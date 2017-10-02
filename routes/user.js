@@ -1,5 +1,6 @@
 var router = require("express").Router();
 var User = require("../models/user");
+var Cart = require("../models/cart");
 var passport = require("passport");
 var passportConf = require("../config/passport");
 
@@ -44,14 +45,18 @@ router.post("/signup", (req, res, next) => {
       req.flash("errors", "Account with that email address already exists");
       return res.redirect("/signup");
     } else {
-      user.save((err, user) => {
-        if (err) return next(err);
-
-        req.logIn(user, (err) => {
-          if (err) return next(err);
-          res.redirect("/profile");
-        });
-      });
+      user
+        .save()
+        .then(user => {
+          var cart = new Cart();
+          cart.owner = user._id;
+          cart.save().then(
+            req.logIn(user, () => {
+              res.redirect("/profile");
+            })
+          );
+        })
+        .catch(console.error);
     }
   });
 });

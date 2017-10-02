@@ -3,6 +3,18 @@ import faker from "faker";
 import Category from "../models/category";
 import Product from "../models/product";
 
+router.post("/search", (req, res, next) => {
+  Product.search(
+    {
+      query_string: { query: req.body.search_term }
+    },
+    (err, results) => {
+      if (err) return next(err);
+      res.json(results);
+    }
+  );
+});
+
 router.get("/:name", (req, res) => {
   Category.findOne({ name: req.params.name })
     .then(category => {

@@ -11,8 +11,9 @@ import flash from "express-flash";
 import passport from "passport";
 const MongoStore = require("connect-mongo")(session);
 
-var User = require("./models/user");
-var Category = require("./models/category");
+import User from "./models/user";
+import Category from "./models/category";
+import cartLength from "./middleware/middleware";
 
 var app = express();
 
@@ -55,6 +56,8 @@ app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
+app.use(cartLength);
+
 app.use((req, res, next) => {
   Category.find({}, (err, categories) => {
     if (err) return next(err);
