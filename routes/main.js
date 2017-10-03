@@ -1,6 +1,9 @@
 var router = require("express").Router();
 import User from "../models/user";
 import Product from "../models/product";
+import Cart from "../models/cart";
+
+var stripe = require("stripe")("sk_test_djP9jOvdKt1sfbtmxPCxpBER");
 
 const paginate = (req, res, next) => {
   var perPage = 9;
@@ -45,6 +48,46 @@ stream.on("close", () => {
 
 stream.on("error", err => {
   console.log(err);
+});
+
+router.get("/cart", (req, res) => {
+  Cart.findOne({ owner: req.user._id })
+    .populate("items.item")
+    .exec((err, foundCart) => {
+      res.render("main/cart", {
+        foundCart: foundCart,
+        message: req.flash("remove")
+      });
+    })
+    .catch(console.error);
+});
+
+router.post("/remove", (req, res, next) => {
+  Cart.findOne({ owner: req.user._id }, (err, foundCart) => {
+    foundCart.items.pull(String(req.body.item));
+
+    foundCart.total = (foundCart.total - parseFloat(req.body.price)).toFixed(2);
+    foundCart
+      .save()
+      .then(found => {
+        req.flash("remove", "Succesfully removed");
+        res.redirect("/cart");
+      })
+      .catch(console.error);
+  });
+});
+
+router.post("/product/:product_id", (req, res) => {
+  Cart.findOne({ owner: req.user._id }, (err, cart) => {
+    cart.items.push({
+      item: req.body.product_id,
+      price: parseFloat(req.body.priceValue),
+      quantity: parseInt(req.body.quantity)
+    });
+    cart.total = (cart.total + parseFloat(req.body.priceValue)).toFixed(2);
+
+    cart.save().then(res.redirect("/cart"));
+  }).catch(console.error);
 });
 
 router.post("/search", (req, res, next) => {
@@ -105,6 +148,23 @@ router.get("/product/:id", (req, res, next) => {
       product
     });
   });
+});
+
+router.post("/payment", (req, res, next) => {
+  var stripeToken = req.body.stripeToken;
+  var currentCharges = Math.round(req.body.stripeMoney * 100);
+  stripe.customers
+    .create({
+      source: stripeToken
+    })
+    .then(customer => {
+      return stripe.charges.create({
+        amount: currentCharges,
+        currency: "usd",
+        customer: customer.id
+      });
+    });
+
 });
 
 module.exports = router;
