@@ -3,7 +3,8 @@ import User from "../models/user";
 import Product from "../models/product";
 import Cart from "../models/cart";
 
-var stripe = require("stripe")("sk_test_djP9jOvdKt1sfbtmxPCxpBER");
+import stripePackage from "stripe";
+const stripe = stripePackage("sk_test_djP9jOvdKt1sfbtmxPCxpBER");
 
 const paginate = (req, res, next) => {
   var perPage = 9;
@@ -164,7 +165,6 @@ router.post("/payment", (req, res, next) => {
         customer: customer.id
       });
     });
-
 });
 
 module.exports = router;
