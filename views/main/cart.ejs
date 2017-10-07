@@ -54,7 +54,7 @@
 
               <div class="form-group">
                 <input type="hidden" value="<%= foundCart.total %>">
-                <button type="submit" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Pay with Stripe</button>
+                <button type="submit" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Pay</button>
               </div>
             </span>
 
@@ -81,6 +81,7 @@
                         </div>
                         <div class="panel-body">
                           <form action="/payment" method="post" id="payment-form">
+                            <input type="hidden" name="stripeMoney" value="<%= foundCart.total %>">
                             <div class="form-row">
                               <label for="card-element">
                                 Credit or debit card

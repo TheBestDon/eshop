@@ -2,9 +2,9 @@ var router = require("express").Router();
 import User from "../models/user";
 import Product from "../models/product";
 import Cart from "../models/cart";
+import config from "../config/secret";
 
-import stripePackage from "stripe";
-const stripe = stripePackage("sk_test_djP9jOvdKt1sfbtmxPCxpBER");
+var stripe = require("stripe")(config.keySecret);
 
 const paginate = (req, res, next) => {
   var perPage = 9;
@@ -151,19 +151,57 @@ router.get("/product/:id", (req, res, next) => {
   });
 });
 
-router.post("/payment", (req, res, next) => {
-  var stripeToken = req.body.stripeToken;
-  var currentCharges = Math.round(req.body.stripeMoney * 100);
+router.post("/payment", (req, res) => {
+  var token = req.body.stripeToken;
+  let amount = Math.round(req.body.stripeMoney * 100);
+
   stripe.customers
     .create({
-      source: stripeToken
+      email: req.body.email,
+      card: req.body.id,
+      source: token
     })
-    .then(customer => {
-      return stripe.charges.create({
-        amount: currentCharges,
+    .then(customer =>
+      stripe.charges.create({
+        amount,
+        description: "Sample Charge",
         currency: "usd",
         customer: customer.id
-      });
+      })
+    )
+    .then(charge =>
+      Cart.findOne({ owner: req.user._id }, (err, cart) => {
+        User.findOne({ _id: req.user._id }, (err, user) => {
+          if (user) {
+            for (var i = 0; i < cart.items.length; i++) {
+              user.history.push({
+                item: cart.items[i].item,
+                paid: cart.items[i].price
+              });
+            }
+
+            user
+              .save((err, user, next) => {
+                if (err) return next(err);
+              })
+              .then(user => {
+                Cart.update(
+                  { owner: user._id },
+                  { $set: { items: [], total: 0 } },
+                  (err, updated) => {
+                    if (updated) {
+                      res.redirect("profile");
+                    }
+                  }
+                );
+              });
+          }
+        });
+      })
+    )
+    .catch(err => {
+      console.log("Error:", err);
+      res.status(500).send({ error: "Purchase Failed" });
     });
 });
 
