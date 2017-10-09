@@ -15,6 +15,7 @@
   "author": "Donatas Bakanas",
   "license": "MIT",
   "dependencies": {
+    "async": "^2.5.0",
     "axios": "^0.16.2",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
@@ -41,6 +42,7 @@
     "mongoose": "^4.11.9",
     "node-sass-middleware": "^0.11.0",
     "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1",
     "passport-local": "^1.0.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",

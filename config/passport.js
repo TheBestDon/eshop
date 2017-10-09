@@ -1,6 +1,10 @@
 var passport = require("passport");
 var LocalStrategy = require("passport-local").Strategy;
-var User = require("../models/user");
+var FacebookStrategy = require("passport-facebook").Strategy;
+import secret from "./secret";
+import User from "../models/user";
+import Cart from "../models/cart";
+import async from "async";
 
 // serialize and deserialize
 passport.serializeUser(function(user, done) {
@@ -42,6 +46,48 @@ passport.use(
           );
         }
         return done(null, user);
+      });
+    }
+  )
+);
+
+passport.use(
+  new FacebookStrategy(
+    secret.facebook,
+    (token, refreshToken, profile, done) => {
+      User.findOne({ facebook: profile.id }, (err, user) => {
+        if (err) return done(err);
+
+        if (user) {
+          return done(null, user);
+        } else {
+          async.waterfall([
+            function(callback) {
+              var newUser = new User();
+              newUser.email = profile._json.email;
+              newUser.facebook = profile.id;
+              newUser.tokens.push({ kind: "facebook", token: token });
+              newUser.profile.name = profile.displayName;
+              newUser.profile.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
+
+              newUser.save(err => {
+                if (err) throw err;
+
+                callback(err, newUser);
+              });
+            },
+            function(newUser) {
+              console.log(newUser);
+
+              var cart = new Cart();
+              cart.owner = newUser._id;
+              cart.save(err => {
+                if (err) return done(err);
+                return done(err, newUser);
+              });
+            }
+          ]);
+        }
       });
     }
   )

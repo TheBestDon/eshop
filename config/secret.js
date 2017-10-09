@@ -10,6 +10,13 @@ export default {
   secretKey: "ThebestDon123",
   keyPublishable: "pk_test_9iaz5aFgWMVJf4grUle9Dr3E",
   keySecret: "sk_test_djP9jOvdKt1sfbtmxPCxpBER",
+
+  facebook: {
+    clientID: env.FACEBOOK_ID || "179194002639959",
+    clientSecret: env.FACEBOOK_SECRET || "dab14592c778de0215e02207c16b1a27",
+    profileFields: ["email", "displayName", "picture"],
+    callbackURL: "http://localhost:8080/auth/facebook/callback"
+  },
   get serverUrl() {
     return `http://${this.host}:${this.port}`;
   }

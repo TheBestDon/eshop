@@ -18,12 +18,14 @@ router.post(
   })
 );
 
-router.get("/profile", (req, res, next) => {
-  User.findOne({ _id: req.user._id }, (err, user) => {
-    if (err) return next(err);
+router.get("/profile", passportConf.isAuthenticated, (req, res, next) => {
+  User.findOne({ _id: req.user._id })
+    .populate("history.item")
+    .exec((err, foundUser) => {
+      if (err) return next(err);
 
-    res.render("accounts/profile", { user: user });
-  });
+      res.render("accounts/profile", { user: foundUser });
+    });
 });
 
 router.get("/signup", (req, res, next) => {
@@ -84,5 +86,18 @@ router.post("/edit-profile", (req, res, next) => {
     });
   });
 });
+
+router.get(
+  "/auth/facebook",
+  passport.authenticate("facebook", { scope: "email" })
+);
+
+router.get(
+  "/auth/facebook/callback",
+  passport.authenticate("facebook", {
+    successRedirect: "/profile",
+    failureRedirect: "/login"
+  })
+);
 
 module.exports = router;
