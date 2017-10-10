@@ -34,7 +34,10 @@ passport.use(
           return done(
             null,
             false,
-            req.flash("loginMessage", "No user has been found")
+            req.flash(
+              "loginMessage",
+              "No user has been found or wrong password"
+            )
           );
         }
 
@@ -42,7 +45,10 @@ passport.use(
           return done(
             null,
             false,
-            req.flash("loginMessage", "Oops! Wrong Password pal")
+            req.flash(
+              "loginMessage",
+              "No user has been found or wrong password"
+            )
           );
         }
         return done(null, user);
@@ -77,8 +83,6 @@ passport.use(
               });
             },
             function(newUser) {
-              console.log(newUser);
-
               var cart = new Cart();
               cart.owner = newUser._id;
               cart.save(err => {
