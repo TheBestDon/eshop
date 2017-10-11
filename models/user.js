@@ -12,7 +12,7 @@ var UserSchema = new Schema({
   tokens: Array,
 
   profile: {
-    displayName: { type: String, default: "" },    
+    displayName: { type: String, default: "" },
     firstName: { type: String, default: "" },
     lastName: { type: String, default: "" },
     picture: { type: String, default: "" }

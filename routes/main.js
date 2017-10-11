@@ -19,7 +19,7 @@ const paginate = (req, res, next) => {
       Product.count().exec((err, count) => {
         if (err) return next(err);
         res.render("main/product-main", {
-          products: products,
+          products,
           pages: count / perPage
         });
       });
@@ -108,7 +108,7 @@ router.get("/search", (req, res, next) => {
         });
         res.render("main/search-result", {
           query: req.query.q,
-          data: data
+          data
         });
       }
     );
