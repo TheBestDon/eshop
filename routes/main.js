@@ -131,10 +131,6 @@ router.get("/about", (req, res) => {
   res.render("main/about");
 });
 
-router.get("/picture", (req, res) => {
-  res.render("main/picture");
-});
-
 router.get("/products/:id", (req, res, next) => {
   Product.find({ category: req.params.id })
     .populate("category")

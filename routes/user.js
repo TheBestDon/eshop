@@ -37,7 +37,8 @@ router.get("/signup", (req, res, next) => {
 router.post("/signup", (req, res, next) => {
   var user = new User();
 
-  user.profile.name = req.body.name;
+  user.profile.firstName = req.body.firstName;
+  user.profile.lastName = req.body.lastName;
   user.email = req.body.email;
   user.password = req.body.password;
   user.profile.picture = user.gravatar();
@@ -76,13 +77,14 @@ router.post("/edit-profile", (req, res, next) => {
   User.findOne({ _id: req.user._id }, (err, user) => {
     if (err) return next(err);
 
-    if (req.body.name) user.profile.name = req.body.name;
+    if (req.body.firstName) user.profile.firstName = req.body.firstName;
+    if (req.body.lastName) user.profile.lastName = req.body.lastName;
     if (req.body.address) user.address = req.body.address;
 
     user.save(err => {
       if (err) return next(err);
       req.flash("success", "Successfully Edited your profile");
-      return res.redirect("/edit-profile");
+      return res.redirect("/profile");
     });
   });
 });

@@ -72,8 +72,10 @@ passport.use(
               var newUser = new User();
               newUser.email = profile._json.email;
               newUser.facebook = profile.id;
-              newUser.tokens.push({ kind: "facebook", token: token });
-              newUser.profile.name = profile.displayName;
+              newUser.tokens.push({ kind: "facebook", token });
+              newUser.profile.displayName = profile._json.name;
+              newUser.profile.firstName = profile._json.first_name;
+              newUser.profile.lastName = profile._json.last_name;
               newUser.profile.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
 
               newUser.save(err => {
