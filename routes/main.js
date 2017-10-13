@@ -102,7 +102,6 @@ router.get("/search", (req, res, next) => {
         query_string: { query: req.query.q }
       },
       (err, results) => {
-        results: if (err) return next(err);
         var data = results.hits.hits.map(hit => {
           return hit;
         });
@@ -129,6 +128,14 @@ router.get("/page/:page", (req, res, next) => {
 
 router.get("/about", (req, res) => {
   res.render("main/about");
+});
+
+router.get("/contact", (req, res) => {
+  res.render("main/contacts");
+});
+
+router.get("/faq", (req, res) => {
+  res.render("main/faq");
 });
 
 router.get("/products/:id", (req, res, next) => {
